@@ -53,13 +53,7 @@ const Login = (props) => {
         <div className="login-image">
           <img src={logo} className="App-logo" alt="logo" />
         </div>
-        <div
-          style={{
-            display: "flex",
-            borderLeft: "1px solid gray",
-            height: "40%",
-          }}
-        ></div>
+        <div className="devider"></div>
         <form className="form-wrapper" onSubmit={handleSubmit}>
           <div className="input-wrapper">
             <label htmlFor="username">نام کاربری</label>

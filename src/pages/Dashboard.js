@@ -47,7 +47,7 @@ const Dashboard = () => {
   }, [handleGetProducts, token]);
 
   return (
-    <div className="ag-theme-alpine" style={{ width: "100%", height: "80%" }}>
+    <div className="ag-theme-alpine dashboard-wrapper">
       <AgGridReact
         ref={gridRef}
         rowData={productsData?.products}
