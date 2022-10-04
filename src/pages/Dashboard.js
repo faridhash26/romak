@@ -1,5 +1,3 @@
-import { AgGridReact } from "ag-grid-react";
-import axios from "axios";
 import React, {
   useCallback,
   useEffect,
@@ -7,6 +5,9 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { AgGridReact } from "ag-grid-react";
+import axios from "axios";
+
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css";
 
@@ -30,12 +31,12 @@ const Dashboard = () => {
       handleGetProducts(token);
     }
   }, []);
-  const gridRef = useRef(); // Optional - for accessing Grid's API
+  const gridRef = useRef();
   const [columnDefs, setColumnDefs] = useState([
-    { field: "id", filter: true },
-    { field: "title", filter: true },
-    { field: "description" },
-    { field: "price" },
+    { field: "id", filter: true, floatingFilter: true },
+    { field: "title", filter: true, floatingFilter: true },
+    { field: "description", filter: true, floatingFilter: true },
+    { field: "price", filter: true, floatingFilter: true },
     { field: "discountPercentage" },
   ]);
   // DefaultColDef sets props common to all Columns
@@ -48,19 +49,17 @@ const Dashboard = () => {
     console.log("cellClicked", event);
   }, []);
 
-
-
   console.log(productsData?.products);
   return (
     <div className="ag-theme-alpine" style={{ width: "100%", height: "100%" }}>
       <AgGridReact
-        ref={gridRef} // Ref for accessing Grid's API
-        rowData={productsData?.products} // Row Data for Rows
-        columnDefs={columnDefs} // Column Defs for Columns
-        defaultColDef={defaultColDef} // Default Column Properties
-        animateRows={true} // Optional - set to 'true' to have rows animate when sorted
-        rowSelection="multiple" // Options - allows click selection of rows
-        onCellClicked={cellClickedListener} // Optional - registering for Grid Event
+        ref={gridRef}
+        rowData={productsData?.products}
+        columnDefs={columnDefs}
+        defaultColDef={defaultColDef}
+        animateRows={true}
+        rowSelection="multiple"
+        onCellClicked={cellClickedListener}
       />
     </div>
   );
