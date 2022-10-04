@@ -1,36 +1,67 @@
 import { AgGridReact } from "ag-grid-react";
-import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
+import "ag-grid-community/styles/ag-theme-alpine.css";
 
 const Dashboard = () => {
-  const getRowId = useMemo(() => {
-    return (params) => params.data.id;
-  }, []);
-  const [columnDefs, setColumnDefs] = useState([
-    { headerName: "Row ID", valueGetter: "node.id" },
-    { field: "make" },
-    { field: "model" },
-    { field: "price" },
-  ]);
-  const [rowData, setRowData] = useState([
-    { id: "c1", make: "Toyota", model: "Celica", price: 35000 },
-    { id: "c2", make: "Ford", model: "Mondeo", price: 32000 },
-    { id: "c8", make: "Porsche", model: "Boxster", price: 72000 },
-    { id: "c4", make: "BMW", model: "M50", price: 60000 },
-    { id: "c14", make: "Aston Martin", model: "DBX", price: 190000 },
-  ]);
+  const [productsData, setProductsData] = useState();
+  var token = localStorage.getItem("token");
 
-  const handleGetProducts = () => {};
+  const handleGetProducts = async (token) => {
+    try {
+      const AuthStr = "Bearer ".concat(token);
+      const res = await axios.get("https://dummyjson.com/auth/products", {
+        headers: { Authorization: AuthStr },
+      });
+      setProductsData(res.data);
+    } catch (error) {
+      alert(error);
+    }
+  };
   useEffect(() => {
-    handleGetProducts();
+    if (token) {
+      handleGetProducts(token);
+    }
+  }, []);
+  const gridRef = useRef(); // Optional - for accessing Grid's API
+  const [columnDefs, setColumnDefs] = useState([
+    { field: "id", filter: true },
+    { field: "title", filter: true },
+    { field: "description" },
+    { field: "price" },
+    { field: "discountPercentage" },
+  ]);
+  // DefaultColDef sets props common to all Columns
+  const defaultColDef = useMemo(() => ({
+    sortable: true,
+  }));
+
+  // Example of consuming Grid Event
+  const cellClickedListener = useCallback((event) => {
+    console.log("cellClicked", event);
   }, []);
 
+
+
+  console.log(productsData?.products);
   return (
-    <div>
+    <div className="ag-theme-alpine" style={{ width: "100%", height: "100%" }}>
       <AgGridReact
-        rowData={rowData}
-        columnDefs={columnDefs}
-        getRowId={getRowId}
-      ></AgGridReact>
+        ref={gridRef} // Ref for accessing Grid's API
+        rowData={productsData?.products} // Row Data for Rows
+        columnDefs={columnDefs} // Column Defs for Columns
+        defaultColDef={defaultColDef} // Default Column Properties
+        animateRows={true} // Optional - set to 'true' to have rows animate when sorted
+        rowSelection="multiple" // Options - allows click selection of rows
+        onCellClicked={cellClickedListener} // Optional - registering for Grid Event
+      />
     </div>
   );
 };
